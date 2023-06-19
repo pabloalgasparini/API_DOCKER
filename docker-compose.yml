@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  base_de_datos:
+    image: mysql:8.0.33
+    container_name: my-db
+
+    environment:
+       MYSQL_ROOT_PASSWORD: docker
+       MYSQL_DATABASE: kiosko
+    
+    ports:
+      - 3306:3306
+
+    volumes:
+      - ./db-mysql:/var/lib/mysql
+
+
+  servidor:
+    container_name: servidor
+
+    build: 
+      context: .
+
+      dockerfile: Dockerfile
+
+    environment:
+       PORT: 3000
+       DATABASE_HOST: base_de_datos
+       DATABASE_USER: root 
+       DATABASE_PASSWORD: docker
+       DATABASE_NAME: kiosko
+
+
+    restart: always
+
+    depends_on: 
+      - base_de_datos
+
+    ports: 
+      - 3000:3000
+
+    volumes:
+      - ./servidor:/servidor
